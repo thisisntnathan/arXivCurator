@@ -1,0 +1,7 @@
+# private keys
+*.pem
+.env
+
+# cache and checkpoint directories
+__pycache__/
+.ipynb_checkpoints/
