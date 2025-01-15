@@ -5,3 +5,6 @@
 # cache and checkpoint directories
 __pycache__/
 .ipynb_checkpoints/
+
+# user specific toml
+nathan.toml
