@@ -139,7 +139,6 @@ Currently, the preference engine is implemented through the OpenAI [Assistants A
 | SynPlanner: An End-to-End Tool for Synthesis Planning | 1 |
 | ... |  |
 | DeepSMILES: An Adaptation of SMILES for Use in Machine-Learning of Chemical Structures | 1 |
-|||  
 
 
 ## Known Issues and TODOs
