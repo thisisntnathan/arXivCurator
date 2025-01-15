@@ -1,0 +1,17 @@
+[user]
+user_id = "user"
+application_context = "arXivCurator"
+user_rec_bot_ID = "asst_..."
+top_rss_feeds = ["https://rss.arxiv.org/rss/physics.chem-ph+physics.bio-ph", "http://connect.biorxiv.org/biorxiv_xml.php?subject=pharmacology_and_toxicology", "https://chemrxiv.org/engage/rss/chemrxiv?categoryId=605c72ef153207001f6470ce"]
+
+[user.github]
+write_repo = "user/arXivCurator"
+write_file = "readinglist.md"
+app_name = "arXivCurator[bot]"
+app_email = "...+arXivCurator[bot]@users.noreply.github.com"
+
+[user.email]
+sender_email = "user@email.com"
+sender_email_app_pw = "..."
+sender_smtp = "smtp.email.com"
+recipient_email = "user@email.com"
