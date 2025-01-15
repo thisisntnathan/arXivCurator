@@ -16,28 +16,23 @@ __date__ = "2025-01-05"
 
 
 import argparse
-import os
-import sys
-import re
 import datetime
+import os
+import re
 
 import toml
 from dotenv import load_dotenv
-
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import InjectedStore, create_react_agent
-from langgraph.store.base import BaseStore
-from langgraph.store.memory import InMemoryStore
-from openai import OpenAI
-from typing_extensions import Annotated, TypedDict
+from langgraph.prebuilt import create_react_agent  # , InjectedStore
+# from langgraph.store.base import BaseStore
+# from langgraph.store.memory import InMemoryStore
 
 from tools import (
-    read_rss,
     get_user_sources,
     read_and_triage,
+    read_rss,
     send_email,
     shorten_abstract,
     update_github_target,
