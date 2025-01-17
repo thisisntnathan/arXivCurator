@@ -12,7 +12,7 @@ __author__ = "Nathan Lui"
 __copyright__ = "Copyright 2025"
 __credits__ = ["Nathan Lui"]
 __license__ = "MIT"
-__date__ = "2025-01-05"
+__date__ = "2025-01-17"
 
 
 import argparse
@@ -81,33 +81,37 @@ def main(args):
         tools=tools,
         state_modifier=sm,
         checkpointer=memory,
-        # store=store,    #TODO
+        # store=store,  # TODO
     )
 
     # for output file
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S:%f")
 
     # lfg
-    events = agent_executor.invoke(
-        {"messages": [HumanMessage(args.message)]},
-        config,
-    )
+    if args.stream:
+        events = agent_executor.stream(
+            {"messages": [HumanMessage(args.message)]}, config, stream_mode="values"
+        )
+        for event in events:
+            print(event["messages"][-1].pretty_repr())
+    else:
+        events = agent_executor.invoke(
+            {"messages": [HumanMessage(args.message)]},
+            config,
+        )
+        os.makedirs(args.output_dir, exist_ok=True)
+        log_file = os.path.join(
+            args.output_dir, f"{timestamp}_{events['messages'][0].id}.log"
+        )
+        with open(log_file, "w") as f:
+            for event in events["messages"]:
+                print(event.pretty_repr(), file=f)
 
-    # write outfiles
-    os.mkdirs(args.output_dir, exist_ok=True)
-
-    log_file = os.path.join(
-        args.output_dir, f"{timestamp}_{events['messages'][0].id}.log"
-    )
-    with open(log_file, "w") as f:
-        for event in events["messages"]:
-            print(event.pretty_repr(), file=f)
-
-    response_file = os.path.join(
-        args.output_dir, f"{timestamp}_{events['messages'][0].id}.md"
-    )
-    with open(response_file, "w") as f:
-        print(events["messages"][-1].pretty_repr(), file=f)
+        response_file = os.path.join(
+            args.output_dir, f"{timestamp}_{events['messages'][0].id}.md"
+        )
+        with open(response_file, "w") as f:
+            print(events["messages"][-1].pretty_repr(), file=f)
 
 
 if __name__ == "__main__":
@@ -126,7 +130,8 @@ if __name__ == "__main__":
         "-m",
         "--message",
         type=str,
-        default="Read through my top rss feeds and update the reading list with anything interesting",
+        default="Read through my top rss feeds and update reading list with anything interesting.\
+        Make sure to find intereting articles, summarize the abstracts, and upload them to the remote file.",
         help="User message to the agent",
     )
 
@@ -144,6 +149,14 @@ if __name__ == "__main__":
         type=str,
         default="results",
         help="Output directory for logs and results",
+    )
+
+    parser.add_argument(
+        "-s",
+        "--stream",
+        default=False,
+        action="store_true",
+        help="Stream the output to the console",
     )
 
     args = parser.parse_args()
