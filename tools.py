@@ -10,7 +10,7 @@ __author__ = "Nathan Lui"
 __copyright__ = "Copyright 2025"
 __credits__ = ["Nathan Lui"]
 __license__ = "MIT"
-__date__ = "2025-01-05"
+__date__ = "2025-01-17"
 
 import os
 import sys
@@ -22,10 +22,11 @@ from time import mktime
 
 import feedparser
 from github import Auth, GithubIntegration, InputGitAuthor
-from langchain.agents import tool
 from langchain_core.runnables import RunnableConfig
-from langgraph.prebuilt import InjectedStore
-from langgraph.store.base import BaseStore
+from langchain_core.tools import tool
+
+# from langgraph.prebuilt import InjectedStore
+# from langgraph.store.base import BaseStore
 from openai import OpenAI
 from typing_extensions import Annotated
 
@@ -40,9 +41,10 @@ def get_user_sources(config: RunnableConfig) -> list[str]:
 
 @tool
 def read_rss(url: str, num_articles: int = sys.maxsize) -> list[dict]:
-    """This tool will read data from an RSS feed and return articles from the feed regardless of potential interest.
-    If a certain number of articles is requested the list will return no more than the specified number of articles.
-    By default this tool returns all articles in the feed.
+    """This tool will read data from an RSS feed and return articles from the feed
+    regardless of potential interest. If a certain number of articles is requested
+    the list will return no more than the specified number of articles. By default
+    this tool returns all articles in the feed.
     """
     return feedparser.parse(url)["entries"][:num_articles]
 
@@ -66,6 +68,11 @@ def read_and_triage(
             for paper in new_papers
         ]
     )
+    # grab feed title for later
+    try:
+        feed_title = feedparser.parse(url)["feed"]["title"]
+    except KeyError:
+        feed_title = url
 
     # instantiate preference agent
     client = OpenAI()
@@ -76,7 +83,7 @@ def read_and_triage(
     _ = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
-        content=f"""This is a list of papers, determine whether each paper is interesting:\n{titles}""",
+        content=f"This is a list of papers, determine whether each paper is interesting:\n{titles}",
     )
 
     run = client.beta.threads.runs.create_and_poll(
@@ -109,9 +116,7 @@ def read_and_triage(
             "link": paper.get("link"),
             "date": paper.get("updated"),
             "authors": paper.get("authors"),
-            "source": paper.get(
-                "prism_publicationtitle", paper.get("tags")[0].get("term") + " on arXiv"
-            ),
+            "source": feed_title,
         }
         outs.append(entry)
 
@@ -125,7 +130,9 @@ def shorten_abstract(title: str, abstract: str) -> str:
     messages = [
         {
             "role": "system",
-            "content": "Summarize the following paper from its title and abstract. Make sure to highlight any datasets, methods, and results that are mentioned. Keep your summary to fewer than 60 words",
+            "content": "Summarize the following paper from its title and abstract. \
+            Make sure to highlight any datasets, methods, and results that are mentioned. \
+            Keep your summary to fewer than 60 words",
         },
         {
             "role": "user",
@@ -201,8 +208,8 @@ def update_github_target(payload: str, config: RunnableConfig) -> str:
         commit_hash = "COMMIT ERROR: DO NOT TRY AGAIN. SEND AN EMAIL INSTEAD."
 
     return f"Readinglist Updated!\nTo catch up on the your reading, visit\
-        https://thisisntnathan.github.io/memorypalace/readinglist.html\
-            \nCommit hash:{commit_hash}"
+    https://thisisntnathan.github.io/memorypalace/readinglist.html\
+    \nCommit hash:{commit_hash}"
 
 
 @tool
