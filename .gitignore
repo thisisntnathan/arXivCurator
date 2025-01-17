@@ -8,3 +8,6 @@ __pycache__/
 
 # user specific toml
 nathan.toml
+
+# results dir
+results/
