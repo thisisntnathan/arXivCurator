@@ -1,7 +1,7 @@
 [user]
 user_id = "user"
 application_context = "arXivCurator"
-user_rec_bot_ID = "asst_..."
+user_rec_bot_id = "asst_..."
 top_rss_feeds = ["https://rss.arxiv.org/rss/physics.chem-ph+physics.bio-ph", "http://connect.biorxiv.org/biorxiv_xml.php?subject=pharmacology_and_toxicology", "https://chemrxiv.org/engage/rss/chemrxiv?categoryId=605c72ef153207001f6470ce"]
 
 [user.github]
