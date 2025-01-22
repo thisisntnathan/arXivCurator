@@ -25,9 +25,8 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import create_react_agent  # , InjectedStore
-# from langgraph.store.base import BaseStore
-# from langgraph.store.memory import InMemoryStore
+from langgraph.prebuilt import create_react_agent
+from langgraph.store.memory import InMemoryStore
 
 from tools import (
     get_user_sources,
@@ -65,8 +64,9 @@ def main(args):
     # checkpointing memory (thread persistence not true memory)
     memory = MemorySaver()
 
-    # persistent memory store for agent (#TODO: implement for context expansion?)
-    # store = InMemoryStore()
+    # cross-thread/persistent memory store for agent
+    # allows for us to evaluate multiple rss feeds
+    store = InMemoryStore()
 
     sm = SystemMessage(
         "You are a helpful reading assistant. Your primary task is to read \
@@ -81,7 +81,7 @@ def main(args):
         tools=tools,
         state_modifier=sm,
         checkpointer=memory,
-        # store=store,  # TODO
+        store=store,
     )
 
     # for output file
