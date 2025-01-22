@@ -143,12 +143,14 @@ Currently, the preference engine is implemented through the OpenAI [Assistants A
 
 ## Known Issues and TODOs
 
+- [x] Agent seems to have lost the ability to publish from multiple feeds?  
+    - Issue: Supervisor users multiple threads to read multiple feeds, cross-thread memory is now sketchy  
+    - Fix: previously the memory implementation allowed for cross thread memory, put this back  
 - [x] Convert memory store ops to config ops
     - In the future we'll use episodic memory to extend the agent's ability to ingest more articles (see below)  
-    - There are still remnants of the old memory implementation in the toolcode!
-- [x] Email tool setup and test
-    - N.b. This feature may not work depending on your network admin...
-- [ ] Jupyter notebook/colab implementation
+- [x] Email tool setup and test  
+    - N.b. This feature may not work depending on your network admin...  
+- [x] Jupyter notebook~~/colab~~ implementation  
 - [ ] When there are too many interesting papers (~ >50) the supervisor's context is overwhelmed and the agent starts to "forget" things.  
     - Explore using some sort of episodic memory to store interesting papers as we go to avoid context overflow?  
 
